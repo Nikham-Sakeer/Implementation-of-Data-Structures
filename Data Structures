@@ -1,0 +1,669 @@
+#include<stdio.h>
+#include<stdlib.h>      /* for exit() */
+#include<string.h>
+#define SIZE 100
+#define MAX 6
+char stack[SIZE];
+int cqueue_arr[MAX];
+int top = -1;
+int queue_array[MAX];
+int rear = - 1;
+int front = - 1;
+int Q[MAX],Pr[MAX];
+int r = -1,f = -1;
+
+typedef struct dequeue
+{
+    int data[MAX];
+    int rear,front;
+} dequeue;
+
+//insert to circular queue
+void insert_cque(int item)
+{
+    if((front == 0 && rear == MAX-1) || (front == rear+1))
+    {
+        printf("Queue Overflow \n");
+        return;
+    }
+    if(front == -1)
+    {
+        front = 0;
+        rear = 0;
+    }
+    else
+    {
+        if(rear == MAX-1)
+            rear = 0;
+        else
+            rear = rear+1;
+    }
+    cqueue_arr[rear] = item ;
+}
+
+//delete from circular queue
+void delete_cque()
+{
+    if(front == -1)
+    {
+        printf("Queue Underflow\n");
+        return ;
+    }
+    printf("Element deleted from queue is : %d\n",cqueue_arr[front]);
+    if(front == rear)
+    {
+        front = -1;
+        rear=-1;
+    }
+    else
+    {
+        if(front == MAX-1)
+            front = 0;
+        else
+            front = front+1;
+    }
+}
+//display circular queue
+void display_cque()
+{
+    int front_pos = front,rear_pos = rear;
+    if(front == -1)
+    {
+        printf("Queue is empty\n");
+        return;
+    }
+    printf("Queue elements :\n");
+    if( front_pos <= rear_pos )
+        while(front_pos <= rear_pos)
+        {
+            printf("%d ",cqueue_arr[front_pos]);
+            front_pos++;
+        }
+    else
+    {
+        while(front_pos <= MAX-1)
+        {
+            printf("%d ",cqueue_arr[front_pos]);
+            front_pos++;
+        }
+        front_pos = 0;
+        while(front_pos <= rear_pos)
+        {
+            printf("%d ",cqueue_arr[front_pos]);
+            front_pos++;
+        }
+    }
+    printf("\n");
+}
+
+
+//insert to queue
+void insert_q()
+{
+    int item;
+    if(rear == MAX - 1)
+        printf("Queue Overflow \n");
+    else
+    {
+        if(front== - 1)
+            front = 0;
+        printf("Enter element to insert into queue : ");
+        scanf("%d", &item);
+        rear = rear + 1;
+        queue_array[rear] = item;
+    }
+}
+
+//delete from queue
+void delete_q()
+{
+    if(front == - 1 || front > rear)
+    {
+        printf("Queue Underflow \n");
+        return;
+    }
+    else
+    {
+        printf("Element deleted from queue is : %d\n", queue_array[front]);
+        front = front + 1;
+    }
+}
+
+//diplay queue
+void display_q()
+{
+    int i;
+    if(front == - 1)
+        printf("Queue is empty \n");
+    else
+    {
+        printf("Queue is : \n");
+        for(i = front; i <= rear; i++)
+            printf("%d ", queue_array[i]);
+        printf("\n");
+    }
+}
+
+//display stack
+void display_stack()
+{
+    int i;
+
+    if(top==-1)
+    {
+        printf("\nStack is empty!!");
+    }
+    else
+    {
+        printf("\nStack is...\n");
+        for(i=top; i>=0; --i)
+            printf("%d\n",stack[i]);
+    }
+}
+// push to stack
+void push()
+
+{
+
+    int val;
+    if(top==SIZE-1)
+
+    {
+        printf("\nStack is full!!");
+    }
+    else
+    {
+        printf("\nEnter element to push:");
+        scanf("%d",&val);
+        top=top+1;
+        stack[top]=val;
+    }
+
+}
+
+//pop from stack
+
+void pop()
+
+{
+
+    if(top==-1)
+
+    {
+        printf("\nStack is empty!!");
+    }
+    else
+    {
+        printf("\nDeleted element is %d",stack[top]);
+        top=top-1;
+    }
+}
+
+
+void initialize(dequeue *P)
+{
+    P->rear=-1;
+    P->front=-1;
+}
+
+int empty(dequeue *P)
+{
+    if(P->rear==-1)
+        return(1);
+
+    return(0);
+}
+
+int full(dequeue *P)
+{
+    if((P->rear+1)%MAX==P->front)
+        return(1);
+
+    return(0);
+}
+
+void enqueueR(dequeue *P,int x)
+{
+    if(empty(P))
+    {
+        P->rear=0;
+        P->front=0;
+        P->data[0]=x;
+    }
+    else
+    {
+        P->rear=(P->rear+1)%MAX;
+        P->data[P->rear]=x;
+    }
+}
+
+void enqueueF(dequeue *P,int x)
+{
+    if(empty(P))
+    {
+        P->rear=0;
+        P->front=0;
+        P->data[0]=x;
+    }
+    else
+    {
+        P->front=(P->front-1+MAX)%MAX;
+        P->data[P->front]=x;
+    }
+}
+
+int dequeueF(dequeue *P)
+{
+    int x;
+
+    x=P->data[P->front];
+
+    if(P->rear==P->front)    //delete the last element
+        initialize(P);
+    else
+        P->front=(P->front+1)%MAX;
+
+    return(x);
+}
+
+int dequeueR(dequeue *P)
+{
+    int x;
+
+    x=P->data[P->rear];
+
+    if(P->rear==P->front)
+        initialize(P);
+    else
+        P->rear=(P->rear-1+MAX)%MAX;
+
+    return(x);
+}
+
+void print(dequeue *P)
+{
+    if(empty(P))
+    {
+        printf("\nQueue is empty!!");
+        exit(0);
+    }
+
+    int i;
+    i=P->front;
+
+    while(i!=P->rear)
+    {
+        printf("\n%d",P->data[i]);
+        i=(i+1)%MAX;
+    }
+
+    printf("\n%d\n",P->data[P->rear]);
+}
+
+//priority queue insert
+void enqueue(int data,int p)//Enqueue function to insert data and its priority in queue
+{
+    int i;
+    if((f==0)&&(r==MAX-1)) //Check if Queue is full
+        printf("Queue is full");
+    else
+    {
+        if(f==-1)//if Queue is empty
+        {
+            f = r = 0;
+            Q[r] = data;
+            Pr[r] = p;
+
+        }
+        else if(r == MAX-1)//if there there is some elemets in Queue
+        {
+            for(i=f; i<=r; i++) {
+                Q[i-f] = Q[i];
+                Pr[i-f] = Pr[i];
+                r = r-f;
+                f = 0;
+                for(i = r; i>f; i--)
+                {
+                    if(p>Pr[i])
+                    {
+                        Q[i+1] = Q[i];
+                        Pr[i+1] = Pr[i];
+                    }
+                    else
+                        break;
+                    Q[i+1] = data;
+                    Pr[i+1] = p;
+                    r++;
+                }
+            }
+        }
+        else
+        {
+            for(i = r; i>=f; i--)
+            {
+                if(p>Pr[i])
+                {
+                    Q[i+1] = Q[i];
+                    Pr[i+1] = Pr[i];
+                }
+                else
+                    break;
+            }
+            Q[i+1] = data;
+            Pr[i+1] = p;
+            r++;
+        }
+    }
+
+}
+void print_prio() //print the data of Queue
+{
+    int i;
+    for(i=f; i<=r; i++)
+    {
+        printf("\nElement = %d\tPriority = %d",Q[i],Pr[i]);
+    }
+}
+int dequeue_prio() //remove the data from front
+{
+    if(f == -1)
+    {
+        printf("Queue is Empty");
+    }
+    else
+    {
+        printf("deleted Element = %d\t Its Priority = %d",Q[f],Pr[f]);
+        if(f==r)
+            f = r = -1;
+        else
+            f++;
+    }
+}
+
+
+
+
+void main()
+{
+    int ch_ds,ch,choice,item=0,end,elem;
+    int opt,n,i,data,p,x,op;
+    char cont;
+    dequeue q;
+    do {
+        printf("\n\t\tMENU\n");
+        printf("\t\t~~~~\n");
+        printf("Choose the type of Data Structure to implement\n");
+        printf("1.Stack\n");
+        printf("2.Queue\n");
+        printf("3.Circular Queue\n");
+        printf("4.Double Ended Queue\n");
+        printf("5.Priority Queue\n");
+        printf("\nEnter your choice:");
+        scanf("%d",&ch_ds);
+
+        switch(ch_ds)
+        {
+
+        case 1:
+
+            do
+
+            {
+
+                printf("\n*** Stack Menu ***");
+                printf("\n\n1.Push\n2.Pop\n3.Display\n4.Exit");
+                printf("\n\nEnter your choice(1-4):");
+                scanf("%d",&ch);
+
+                switch(ch)
+                {
+
+                case 1:
+                    push();
+                    break;
+                case 2:
+                    pop();
+                    break;
+                case 3:
+                    display_stack();
+                    break;
+                case 4:
+                    printf("\nExiting from stack operations.....\n");
+                default:
+                    printf("\nWrong Choice!!\n");
+
+                }
+            } while(ch!=4);
+            break;
+
+
+        case 2:
+
+            do
+            {
+                printf("\n\t\tMENU\n");
+                printf("\t\t----\n");
+                printf("1.Insert element to queue \n");
+                printf("2.Delete element from queue \n");
+                printf("3.Display all elements of queue \n");
+                printf("4.Quit \n");
+                printf("Enter your choice : ");
+                scanf("%d", &choice);
+                switch(choice)
+                {
+                case 1:
+                    insert_q();
+                    break;
+                case 2:
+                    delete_q();
+                    break;
+                case 3:
+                    display_q();
+                    break;
+                case 4:
+                    printf("\nExiting from Queue operations....");
+                default:
+                    printf("\nWrong choice \n");
+                }
+            } while(choice!=4);
+
+            break;
+
+        case 3:
+
+
+            do
+
+            {
+                printf("\n\t\tMENU\n");
+                printf("\t\t----\n");
+
+                printf("1.Insert to circular queue\n");
+
+                printf("2.Delete from circular queue\n");
+
+                printf("3.Display circular queue\n");
+
+                printf("4.Quit \n");
+
+                printf("Enter your choice : ");
+
+                scanf("%d",&choice);
+
+                switch(choice)
+
+                {
+
+                case 1 :
+
+                    printf("Input the element for insertion in queue : ");
+
+                    scanf("%d", &item);
+
+                    insert_cque(item);
+
+                    break;
+
+                case 2 :
+
+                    delete_cque();
+
+                    break;
+
+                case 3:
+
+                    display_cque();
+
+                    break;
+
+                case 4:
+
+                    break;
+
+                default:
+
+                    printf("Wrong choice \n");
+
+                }
+
+            } while(choice!=4);
+
+            break;
+
+        case 4:
+        initialize(&q);
+            do
+            {
+                printf("\n\tOperations\n");
+                printf("\t----------\n");
+                
+                printf("\n1.Create\n2.Insert(rear)\n3.Insert(front)\n4.Delete(rear)\n5.Delete(front)");
+                printf("\n6.Print\n7.Exit\n\nEnter your choice:");
+                scanf("%d",&op);
+
+                switch(op)
+                {
+                case 1:
+                    printf("\nEnter number of elements:");
+                    scanf("%d",&n);
+                    initialize(&q);
+                    printf("\nEnter the data:");
+
+                    for(i=0; i<n; i++)
+                    {
+                        scanf("%d",&x);
+                        if(full(&q))
+                        {
+                            printf("\nQueue is full!!");
+                            exit(0);
+                        }
+                        enqueueR(&q,x);
+                    }
+                    break;
+
+                case 2:
+                    printf("\nEnter element to be inserted:");
+                    scanf("%d",&x);
+
+                    if(full(&q))
+                    {
+                        printf("\nQueue is full!!");
+                        exit(0);
+                    }
+
+                    enqueueR(&q,x);
+                    break;
+
+                case 3:
+                    printf("\nEnter the element to be inserted:");
+                    scanf("%d",&x);
+
+                    if(full(&q))
+                    {
+                        printf("\nQueue is full!!");
+                        exit(0);
+                    }
+
+                    enqueueF(&q,x);
+                    break;
+
+                case 4:
+                    if(empty(&q))
+                    {
+                        printf("\nQueue is empty!!");
+                        exit(0);
+                    }
+
+                    x=dequeueR(&q);
+                    printf("\nElement deleted is %d\n",x);
+                    break;
+
+                case 5:
+                    if(empty(&q))
+                    {
+                        printf("\nQueue is empty!!");
+                        exit(0);
+                    }
+
+                    x=dequeueF(&q);
+                    printf("\nElement deleted is %d\n",x);
+                    break;
+
+                case 6:
+                    print(&q);
+                    break;
+
+                default:
+                    break;
+                }
+            } while(op!=7);
+            break;
+
+        case 5:
+
+
+            do {
+             printf("\n\n\t\tMENU\n");
+                printf("\t\t----\n");
+                printf("1.Insert Data into Queue\n2.Display the Data in Queue \n3.Delete the data from the Queue\n0.Exit\n");
+                printf("Enter Your Choice:- ");
+                scanf("%d",&opt);
+                switch(opt) {
+                case 1:
+                    printf("\nEnter the number of data:");
+                    scanf("%d",&n);
+                    printf("\nEnter Data and Priority of data:\n");
+                    i=0;
+                    while(i<n) {
+                        scanf("%d %d",&data,&p);
+                        enqueue(data,p);
+                        i++;
+                    }
+                    break;
+                case 2:
+                    print_prio();
+                    break;
+                case 3:
+                    dequeue_prio();
+                    break;
+                case 0:
+                    break;
+                default:
+                    printf("\nIncorrect Choice");
+
+                }
+            }
+            while(opt!=0);
+
+            break;
+
+        default:
+            printf("Invalid Choice!");
+
+        }
+        printf("Do you want to continue ? (y/n):");
+        scanf(" %c",&cont);
+    } while(cont=='y' || cont=='Y');
+}
+
+    
